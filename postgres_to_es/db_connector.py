@@ -24,7 +24,7 @@ class PG_reader():
             logging.debug(f"Успешный коннект")
     @utils.benchmark
     def read_data(self, state, limit=3):
-        """Метод загрузки таблиц переданных через переменную table"""
+        """Метод загрузки данных из БД с момента последней обработанной записи """
         logging.debug(f"Загрузка данных. Статус {state}")
         data = [state, limit]
         self.pg_cursor.execute("""
@@ -57,7 +57,7 @@ class PG_reader():
                 LEFT JOIN content.genre g on g.id = gf.genre_id
                 LEFT JOIN content.person_film_work pfw on pfw.film_work_id = fw.id
                 LEFT JOIN content.person p on p.id = pfw.person_id
-                WHERE fw.id = 'c35dc09c-8ace-46be-8941-7e50b768ec33'
+                --WHERE fw.id = 'c35dc09c-8ace-46be-8941-7e50b768ec33'
                 GROUP BY fw.id
                 HAVING greatest(max(fw.updated_at), max(p.updated_at), max(g.updated_at)) > %s
                 ORDER BY greatest(max(fw.updated_at), max(p.updated_at), max(g.updated_at))
@@ -65,6 +65,7 @@ class PG_reader():
                 ) as t
             """, (state, limit))
         for row in self.pg_cursor:
+            #отдельно созраняем json и дату последней обработнной записи
             json_data = row[0]
             last_date = row[1]
         return (json_data, last_date)

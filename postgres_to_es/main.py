@@ -23,8 +23,6 @@ if __name__ == "__main__":
            "password": os.getenv("DATABASE_PASSWORD"),
            "host": os.getenv("DATABASE_HOST"),
            "port": os.getenv("DATABASE_PORT")}
-    #while True:
-    #    try:
     with psycopg2.connect(**pg_dsn, cursor_factory=DictCursor) as pg_conn:
         reader = PG_reader(pg_conn)
         reader.test_connection()
@@ -43,19 +41,3 @@ if __name__ == "__main__":
                 my_state.set_state("last_record_date", str(last_date))
                 logging.debug(f"Обновили даные по последней загруженной партии - {last_date}")
 
-                #saver.check_scheme()
-        #saver.save_all_data(data)
-    #except psycopg2.OperationalError:
-    #    logging.error("Ошибка подключения к Postgres. Проверьте параметры подключения")
-
-
-
-# @benchmark
-# @backoff()
-# def sum(a, b):
-#     print(a+b)
-#     return a + b
-#
-# sum(1,2)
-# sum(1,2)
-# sum(1,2)

@@ -151,8 +151,6 @@ class ES_loader():
 
     def bulk_json_data(self, json_list, index):
         for doc in json_list:
-            # use a `yield` generator so that the data
-            # isn't loaded into memory
 
             if '{"index"' not in doc:
                 yield {
@@ -163,12 +161,7 @@ class ES_loader():
     def load_data(self, index, json_data):
         try:
             logging.debug(f"Вставляем даные")
-            #logging.debug(f"Тип данных {type(json_data)}")
-            #logging.debug(f"Тип данных {(json_data)}")
-            #self.es.bulk(index, list(json_data))
             resp = helpers.bulk(self.es, self.bulk_json_data(json_data,index))
-            #helpers.bulk(elastic, bulk_json_data("people.json", "employees", "people"))
-            #logging.debug(f"Результат {resp}")
             return True
         except Exception as ex:
             logging.debug(f"Ошибка вставки данных: {str(ex)}")

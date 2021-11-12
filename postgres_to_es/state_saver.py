@@ -1,7 +1,10 @@
 import abc
 import json
+import logging
 from typing import Any, Optional
 
+logging.basicConfig(format="%(asctime)s: %(name)s - %(levelname)s - %(message)s",
+                    level=logging.DEBUG)
 
 class BaseStorage:
     @abc.abstractmethod
@@ -28,11 +31,16 @@ class JsonFileStorage(BaseStorage):
             with open(self.file_path, "r") as json_file:
                 states = json.load(json_file)
                 state = states.get(key)
+                print(state)
+                logging.debug(f"Variable state is {state}")
                 return state
+        except json.JSONDecodeError:
+            self.save_state({key: "01.01.1700"})
+            return "01.01.1700"
         except FileNotFoundError:
             new_file = open(self.file_path, "w")
             new_file.close()
-            return None
+            return {key: None}
 
 
 class State:
@@ -53,9 +61,7 @@ class State:
         """Получить состояние по определённому ключу"""
         return self.storage.retrieve_state(key)
 
-# my_storage = JsonFileStorage("my_state.json")
-# my_state = State(my_storage)
-# print(f"Начальный статус {my_state.get_state('State')}")
+
 # my_state.set_state("State", "Fine")
 # print(f"проверяем еще раз статус {my_state.get_state('State')}")
 # my_state.set_state("State", "ALERT")

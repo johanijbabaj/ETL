@@ -29,7 +29,6 @@ def backoff(start_sleep_time=0.1, factor=2, border_sleep_time=10):
     """
 
     def func_wrapper(func):
-        print(f"Смотрим что за магия в декораторе.Сейчас счетчик = {func_wrapper.count}")
         @wraps(func)
         def inner(*args, **kwargs):
             func_wrapper.count += 1
@@ -38,6 +37,7 @@ def backoff(start_sleep_time=0.1, factor=2, border_sleep_time=10):
             if t >= border_sleep_time:
                 t = border_sleep_time
             time.sleep(t)
+            return func()
         return inner
     func_wrapper.count = 0
     return func_wrapper

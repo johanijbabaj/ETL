@@ -4,8 +4,11 @@ from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 from pydantic import BaseModel
 
+import utils
+
 logging.basicConfig(format="%(asctime)s: %(name)s - %(levelname)s - %(message)s",
-                    level=logging.ERROR)
+                    level=logging.DEBUG)
+
 
 class ES_loader():
     dsn: dict
@@ -15,6 +18,7 @@ class ES_loader():
         self.dsn = dsn
         self.es = Elasticsearch([dsn])
 
+    @utils.backoff
     def test_connection(self):
         if self.es.ping():
             logging.debug("ES connected")
@@ -137,7 +141,7 @@ class ES_loader():
         try:
             if not self.es.indices.exists(index_name):
                 # Ignore 400 means to ignore "Index Already Exist" error.
-                self,es.indices.create(index=index_name, ignore=400, body=settings)
+                self.es.indices.create(index=index_name, ignore=400, body=settings)
                 logging.debug("Создали индекс")
 
                 print('Created Index')
@@ -161,10 +165,8 @@ class ES_loader():
     def load_data(self, index, json_data):
         try:
             logging.debug(f"Вставляем даные")
-            resp = helpers.bulk(self.es, self.bulk_json_data(json_data,index))
+            resp = helpers.bulk(self.es, self.bulk_json_data(json_data, index))
             return True
         except Exception as ex:
             logging.debug(f"Ошибка вставки данных: {str(ex)}")
             return False
-
-

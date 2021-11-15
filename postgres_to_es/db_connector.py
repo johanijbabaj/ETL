@@ -1,16 +1,47 @@
 """Модуль описывающий классы """
 
 import logging
+import os
 import utils
+
+from dotenv import load_dotenv
 from psycopg2.extensions import connection as _connection
+from pydantic import BaseModel, BaseSettings, Field
 
 
 logging.basicConfig(format="%(asctime)s: %(name)s - %(levelname)s - %(message)s",
                     level=logging.DEBUG)
+#load_dotenv("")
+#settings = Settings(_env_file="deploy/envs/postgres.env", _env_file_encoding="utf-8")
+
+
+class PgConnectionSettings (BaseSettings):
+    dbname: str = Field(None, env="DATABASE_NAME")
+    user: str = Field(None, env="DATABASE_USER")
+    password: str = Field(None, env="DATABASE_PASSWORD")
+    host: str = Field(None, env="DATABASE_HOST")
+    port: str = Field(None, env="DATABASE_PORT")
+
+    class Config:
+        env_file = "deploy/envs/postgres.env"
+        env_file_encoding = "utf-8"
+
+    #def __init__(self):
+    #    logging.debug(f"Параметры подключение {self.port}, {self.dbname}")
+    # pg_dsn = {"dbname": os.getenv("DATABASE_NAME"),
+    #           "user": os.getenv("DATABASE_USER"),
+    #           "password": os.getenv("DATABASE_PASSWORD"),
+    #           "host": os.getenv("DATABASE_HOST"),
+    #           "port": os.getenv("DATABASE_PORT")}
+    #logging.info(pg_dsn)
+
+
 class PG_reader():
     """
     Класс реаолизует проверку соединения с базой и загрузку данных
     """
+    pg_conn: _connection
+
     def __init__(self, pg_conn: _connection):
         self.pg_conn = pg_conn
         self.pg_cursor = pg_conn.cursor()

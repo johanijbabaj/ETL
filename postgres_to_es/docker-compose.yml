@@ -18,7 +18,7 @@ services:
   es:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: deploy/elasticsearch/Dockerfile
     container_name: es
     restart: always
     volumes:
@@ -27,36 +27,6 @@ services:
       - 9200:9200
     networks:
       - movie_network
-#  app:
-#    build:
-#      context: ./movies_admin
-#      dockerfile: Dockerfile
-#    container_name: app
-#    restart: always
-#    env_file:
-#      - deploy/envs/django.env
-#    networks:
-#      - movie_network
-#    depends_on:
-#      - db_movies
-#
-#  web:
-#    image: nginx:1.19.2
-#    volumes:
-#        - ./deploy/nginx/src/nginx.conf:/etc/nginx/nginx.conf:ro
-#        - ./deploy/nginx/src/conf.d:/etc/nginx/conf.d:ro
-#        - ./movies_admin/static:/home/app/web/static
-#        - ./movies_admin/media:/home/app/web/media
-#    ports:
-#        - 80:80
-#    container_name: web_serv
-#    restart: always
-#    env_file:
-#      - ./deploy/envs/nginx.env
-#    networks:
-#      - movie_network
-#    depends_on:
-#      - app
 volumes:
   postgres_data:
   es_data:

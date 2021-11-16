@@ -25,3 +25,5 @@ texttable==1.6.4
 typing-extensions==3.10.0.2
 urllib3==1.26.7
 websocket-client==0.59.0
+
+elasticsearch~=7.15.2
